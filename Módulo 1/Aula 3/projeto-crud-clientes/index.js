@@ -4,22 +4,49 @@ const { stdin: input, stdout: output } = require("process");
 const rl = readline.createInterface({ input, output });
 
 const customers = [];
-customers[0] = { id: 0, name: "Felipe", address: "São Paulo" };
+customers[0] = { id: 0, name: "Felipe Galvão", address: "São Paulo", age: 22 };
+
+async function getAnswer(question, errorMessage, validationMessage) {
+  let answer = "";
+  do {
+    answer = await rl.question(question);
+    if (!validationMessage(answer)) console.log(errorMessage);
+  } while (!validationMessage(answer));
+  return answer;
+}
+
+function validateName(name) {
+  if (!name) return false;
+  if (name.trim().indexOf(" ") === -1) return false;
+  return true;
+}
+
+function validateAddress(address) {
+  if (!address) return false;
+  return true;
+}
 
 async function addCustomers() {
   console.clear();
-  let name = await rl.question("Nome do cliente ? ");
-  let address = await rl.question("Coloque o endereço: ");
+
+  let name = await getAnswer("Insira o nome do cliente: ","Nome inválido, tente novamente",validateName);
+  let address = await getAnswer("Insira o endereço do cliente: ","Endereço inválido, tente novamente",validateAddress);
+  let age = Number.parseInt(await getAnswer("Insira a idade do cliente: ","Idade inválida, tente novamente",()=>{return true}));
+
   const id = customers.length > 0 ? customers[customers.length - 1].id + 1 : 1;
-  customers.push({ id, name, address });
-  console.log("Cliente cadastrado com sucesso !");
+  customers.push({ id, name, address, age });
+  console.log(`Cliente cadastrado com sucesso! \nCom ID: ${id}`);
   await rl.question("Pressione Enter para continuar...");
   printMenu();
 }
 
 async function listCustomers() {
-  console.log(customers);
-  await rl.question("Pressione Enter para continuar...");
+  console.clear();
+  console.log("Nome | Endereço | Idade")
+  for(let i=0;i<customers.length;i++){
+    console.log(`${customers[i].name} | ${customers[i].address} | ${customers[i].age}`);
+  }
+  await rl.question("\nPressione Enter para continuar...");
   printMenu();
 }
 
