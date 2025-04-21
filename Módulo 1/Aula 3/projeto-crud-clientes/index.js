@@ -73,3 +73,4 @@ async function printMenu() {
   printMenu();
 }
 printMenu();
+db.getCustomers;
