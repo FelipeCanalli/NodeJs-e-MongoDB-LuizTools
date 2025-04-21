@@ -1,10 +1,8 @@
+const db = require("./db");
 const readline = require("readline/promises");
 const { stdin: input, stdout: output } = require("process");
 
 const rl = readline.createInterface({ input, output });
-
-const customers = [];
-customers[0] = { id: 0, name: "Felipe Galvão", address: "São Paulo", age: 22 };
 
 async function getAnswer(question, errorMessage, validationMessage) {
   let answer = "";
@@ -26,21 +24,21 @@ function validateAddress(address) {
   return true;
 }
 
-async function addCustomers() {
+async function startRegistration() {
   console.clear();
 
   let name = await getAnswer("Insira o nome do cliente: ","Nome inválido, tente novamente",validateName);
   let address = await getAnswer("Insira o endereço do cliente: ","Endereço inválido, tente novamente",validateAddress);
   let age = Number.parseInt(await getAnswer("Insira a idade do cliente: ","Idade inválida, tente novamente",()=>{return true}));
 
-  const id = customers.length > 0 ? customers[customers.length - 1].id + 1 : 1;
-  customers.push({ id, name, address, age });
+  const id = db.addCustomers(name,address,age);
   console.log(`Cliente cadastrado com sucesso! \nCom ID: ${id}`);
   await rl.question("Pressione Enter para continuar...");
   printMenu();
 }
 
 async function listCustomers() {
+  const customers = db.getCustomers();
   console.clear();
   console.log("Nome | Endereço | Idade")
   for(let i=0;i<customers.length;i++){
@@ -52,16 +50,14 @@ async function listCustomers() {
 
 async function printMenu() {
   console.clear();
-  console.log(`Menu:
-    1 - Cadastrar cliente
-    2 - Ver Clientes
-    3 - Encerrar`);
+  console.log("Menu: ")
+  console.log(`1 - Cadastrar cliente\n2 - Ver Clientes\n3 - Encerrar`);
 
   var answer = await rl.question("Qual opção você deseja ? ");
 
   switch (answer) {
     case "1":
-      addCustomers();
+      startRegistration();
       break;
     case "2":
       listCustomers();
