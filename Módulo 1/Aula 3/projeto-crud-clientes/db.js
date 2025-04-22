@@ -8,10 +8,29 @@ function addCustomers(name,address, age){
     return id;
 }
 
-function getCustomers(){
-    const customersString = fs.readFileSync("db.json","utf-8");
-    customers = JSON.parse(customersString)
-    return customers; 
+function updateCustomers (id, newData){
+    const customerIndex = customers.findIndex(customer => (customer.id) === (id));
+    if(customerIndex === -1) return false;
+
+    const customer = customers[customerIndex];
+
+    if(newData.name)
+        customer.name = newData.name;
+    if(newData.address)
+        customer.address = newData.address;
+    if(newData.age)
+        customer.age = newData.age;
+    
+    customers[customerIndex] = customer;
+    fs.writeFileSync("db.json",JSON.stringify(customers));
+
+    return true;
 }
 
-module.exports = {addCustomers, getCustomers};
+function getCustomers(){
+    const customersString = fs.readFileSync("db.json","utf-8");
+    customers = JSON.parse(customersString);
+    return customers;
+}
+
+module.exports = {addCustomers, getCustomers, updateCustomers};
