@@ -33,4 +33,20 @@ function getCustomers(){
     return customers;
 }
 
-module.exports = {addCustomers, getCustomers, updateCustomers};
+function getCustomer(id){
+    const customerIndex = customers.findIndex(customer => (customer.id) === (id));
+    if(customerIndex === -1) return false;
+
+    return customers[id];
+}
+
+function deleteCustomer(id){
+    const customerIndex = customers.findIndex(customer => (customer.id) === (id));
+    if(customerIndex === -1) return false;
+
+    customers.splice(id,1);
+    fs.writeFileSync("db.json",JSON.stringify(customers));
+    return true
+}
+
+module.exports = {addCustomers, getCustomers, updateCustomers, deleteCustomer, getCustomer};
